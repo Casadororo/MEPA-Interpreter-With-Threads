@@ -6,30 +6,28 @@
  *      Atualizado em: [15/09/2020, 19h:39m]
  *
  * -------------------------------------------------------------------
- *   Analisador léxico: Reconhecedor dos tokens descritos em 
+ *   Analisador lï¿½xico: Reconhecedor dos tokens descritos em 
  *   leMepa.y
  * ------------------------------------------------------------------- */
 
 %{
+  #include<stdio.h>
+  #include<string.h>
 
-#include<stdio.h>
-#include<string.h>
-
-#include "leMepa.h"
-#include "leMepa.tab.h"
-
+  #include "leMepa.h"
+  #include "leMepa.tab.h"
 
   int num_linha=1;
   void imprimeCarregamento();
 %}
 
 /* -------------------------------------------------------------------
- * Os tokens da MEPA são somente:
- *    - códigos de operação: CRVL, INPP, etc.
- *    - Rótulos: R00, L0000, etc.
- *    - Números como em CRCT 2
+ * Os tokens da MEPA sï¿½o somente:
+ *    - cï¿½digos de operaï¿½ï¿½o: CRVL, INPP, etc.
+ *    - Rï¿½tulos: R00, L0000, etc.
+ *    - Nï¿½meros como em CRCT 2
  *    - dois pontos como em R00:
- *    - vírgula como em CRVL 1,0
+ *    - vï¿½rgula como em CRVL 1,0
  * -------------------------------------------------------------------
  */
 
@@ -83,6 +81,9 @@ PARA            { instr=para; return PARA; }
 RTPR            { instr=rtpr; return RTPR; }
 SOMA            { instr=soma; return SOMA; }
 SUBT            { instr=subt; return SUBT; }
+CTHR            { instr=cthr; return CTHR; }
+STHR            { instr=sthr; return STHR; }
+ETHR            { instr=ethr; return ETHR; }             
 %%
 
 /* -------------------------------------------------------------------
@@ -97,4 +98,3 @@ void imprimeCarregamento(){
   else
     printf(".");
 }
-    

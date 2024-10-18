@@ -21,7 +21,7 @@ int add_thread(THR_mepa *thread_mepa) {
   return 0;
 }
 
-int find_thread(int identificador) {
+int find_thread_by_identifier(int identificador) {
   for (int i = 0; i < TAM_THR; i++) {
     if (thread_mepas[i]->identificador == identificador) {
       return i;
@@ -41,7 +41,7 @@ int find_thread(THR_mepa *thread_mepa) {
   return -1;
 }
 
-int remove_thread(int index) {
+int remove_thread_by_index(int index) {
   if (index == -1)
     return 0;
 
@@ -54,7 +54,7 @@ int remove_thread(int index) {
 int remove_thread(THR_mepa *thread_mepa) {
   int index = find_thread(thread_mepa);
 
-  remove_thread(index);
+  return remove_thread_by_index(index);
 }
 
 void *executaThreadMepa(void *arg) {
@@ -110,7 +110,7 @@ void inicia_THR_mepa(THR_mepa *thread_mepa) {
 }
 
 void espera_encerrar_THR_mepa(int identificador) {
-  int index = find_thread(identificador);
+  int index = find_thread_by_identifier(identificador);
 
   if (index == -1)
     return;

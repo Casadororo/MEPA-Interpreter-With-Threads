@@ -329,6 +329,6 @@ instrucao_mepa executa_instr_MV_mepa() {
 
 instrucao_mepa executa_instr_THR_mepa(THR_mepa *thread_mepa) {
   return _executa_instr_MV_mepa(&thread_mepa->i, &thread_mepa->s,
-                                thread_mepa->vetorInstr, thread_mepa->tam_i,
+                                thread_mepa->vetorInstr, thread_mepa->vetorRegBase,
                                 thread_mepa->vetorPilha);
 }

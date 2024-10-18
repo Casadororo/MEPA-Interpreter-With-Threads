@@ -6,8 +6,8 @@
  *      Atualizado em: [20/09/2020, 08h:10m]
  *
  * -------------------------------------------------------------------
- *   Analisador sintático do arquivo indicado
- *   A regra básica é: 
+ *   Analisador sintï¿½tico do arquivo indicado
+ *   A regra bï¿½sica ï¿½: 
  *   [RXX[:]] XXXX [P1 [P2 [P3]]] 
  * ------------------------------------------------------------------- */
 
@@ -34,15 +34,15 @@ instrucao_mepa instr;
   void yyerror(char *s);
 %}
 
-// símbolos 
+// sï¿½mbolos 
 %token DOIS_PONTOS ROTULO INTEIRO VIRGULA
-// instruções com nenhum parâmetro
+// instruï¿½ï¿½es com nenhum parï¿½metro
 %token INPP PARA SOMA SUBT MULT DIVI INVR CONJ DISJ NEGA 
-%token CMME CMMA CMIG CMDG CMEG CMAG NADA LEIT IMPR 
-// instruções com um parâmetro
-%token CRCT AMEM DMEM ENPR ENRT DSVS DSVF 
-// instruções com dois parâmetros
-%token CRVL ARMZ CRVI ARMI CREN CHPR RTPR DSVR
+%token CMME CMMA CMIG CMDG CMEG CMAG NADA LEIT IMPR STHR
+// instruï¿½ï¿½es com um parï¿½metro
+%token CRCT AMEM DMEM ENPR ENRT DSVS DSVF ETHR
+// instruï¿½ï¿½es com dois parï¿½metros
+%token CRVL ARMZ CRVI ARMI CREN CHPR RTPR DSVR CTHR
 
 %%
  // REGRAS --------------------------------
@@ -54,44 +54,57 @@ linhas: linhas linha
 linha: rot comando 
 ;
 
-// A regra abaixo coloca na variável global "rotInstr" o string
-// correspondente ao rótulo-alvo (o que fica à esquerda do comando)
+// A regra abaixo coloca na variï¿½vel global "rotInstr" o string
+// correspondente ao rï¿½tulo-alvo (o que fica ï¿½ esquerda do comando)
 rot : ROTULO { strcpy(rotInstr,rotulo); } DOIS_PONTOS 
     | %empty { strcpy(rotInstr,""); }
 ;
 
-// Para não exigir a presença da vírgula
+// Para nï¿½o exigir a presenï¿½a da vï¿½rgula
 virgula : VIRGULA 
         | %empty
 ;
 
+
 comando :
-// Comandos sem parametros
-  cmd_sem_param
-               {insereInstr_MV_mepa(rotInstr,instr, 0,0,0,0,"");}; 
-// Comandos com um parametro inteiro 
-| cmd_um_param_int param1_int
-               {insereInstr_MV_mepa(rotInstr,instr,p1_int,0,0,0,"");};
-// Comandos com um parametro que é um rotulo 
-| cmd_um_param_rot param1_rot
-               {insereInstr_MV_mepa(rotInstr,instr,0,0,0,0,p1_rot);};
-// Comandos com dois parametros inteiros 
-| cmd_dois_param_int param1_int virgula param2_int
-               {insereInstr_MV_mepa(rotInstr,instr,p1_int,p2_int,0,0,"");}
-// Comandos com parametros fora dos padroes acima
-| CHPR param1_rot virgula param2_int
-               {insereInstr_MV_mepa(rotInstr,instr,0,p2_int,0,0,p1_rot);}
-| DSVR param1_rot virgula param2_int virgula param3_int
-               {insereInstr_MV_mepa(rotInstr,instr,0,p2_int,p3_int,0,p1_rot);}
+  cmd_sem_param // Comandos sem parametros
+  {
+    insereInstr_MV_mepa(rotInstr, instr, 0, 0, 0, 0, "");
+  }
+  | cmd_um_param_int param1_int // Comandos com um parametro inteiro 
+  {
+    insereInstr_MV_mepa(rotInstr, instr, p1_int, 0, 0, 0, "");
+  }
+  | cmd_um_param_rot param1_rot // Comandos com um parametro que ï¿½ um rotulo 
+  {
+    insereInstr_MV_mepa(rotInstr, instr, 0, 0, 0, 0, p1_rot);
+  }
+  | cmd_dois_param_int param1_int virgula param2_int // Comandos com dois parametros inteiros 
+  {
+    insereInstr_MV_mepa(rotInstr, instr, p1_int, p2_int, 0, 0, "");
+  }
+  | CHPR param1_rot virgula param2_int // Comandos com parametros fora dos padroes acima
+  {
+    insereInstr_MV_mepa(rotInstr, instr, 0, p2_int, 0, 0, p1_rot);
+  }
+  | DSVR param1_rot virgula param2_int virgula param3_int
+  {
+    insereInstr_MV_mepa(rotInstr, instr, 0, p2_int, p3_int, 0, p1_rot);
+  }
+  | CTHR param1_int virgula param1_rot 
+  {
+    insereInstr_MV_mepa(rotInstr, instr, p1_int, 0, 0, 0, p1_rot);
+  }
+;
 
 cmd_sem_param: 
   INPP | PARA | SOMA | SUBT | MULT | DIVI | INVR | CONJ | DISJ |
   NEGA | CMME | CMMA | CMIG | CMDG | CMEG | CMAG | NADA | LEIT |
-  IMPR
+  IMPR | STHR
 ;
 
 cmd_um_param_int:
-  CRCT | AMEM | DMEM | ENPR 
+  CRCT | AMEM | DMEM | ENPR  | ETHR
 ; 
 
 cmd_um_param_rot:
@@ -112,8 +125,8 @@ param1_rot: ROTULO {strncpy(p1_rot, rotulo, TAM_TOKEN);};
 %%
 
 /* -------------------------------------------------------------------
- *  le programa indicado em plc->fp o coloca no vetor de instruções da
- *  máquina virtual mepa (variável global "mv_mepa_I" *
+ *  le programa indicado em plc->fp o coloca no vetor de instruï¿½ï¿½es da
+ *  mï¿½quina virtual mepa (variï¿½vel global "mv_mepa_I" *
  * ------------------------------------------------------------------- */
 void leComandosMepa(params_linha_comando *plc) {
   extern FILE* yyin;
