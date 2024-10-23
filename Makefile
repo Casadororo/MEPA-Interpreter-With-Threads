@@ -41,7 +41,6 @@ headers:
 clean:
 	-rm -r $(BUILDDIR)
 	-rm $(TARGET)
-	-rm MEPA
 
 # Phony target to run the program
 .PHONY: run
