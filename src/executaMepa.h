@@ -9,11 +9,11 @@
  *
  * ------------------------------------------------------------------- */
 
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
 #include "MV_mepa.h"
 #include "interface_usuario.h"
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-void executaMepa(params_linha_comando* olc);
+void executaMepa(params_linha_comando *olc);

@@ -38,11 +38,17 @@ instrucao_mepa instr;
 %token DOIS_PONTOS ROTULO INTEIRO VIRGULA
 // instru��es com nenhum par�metro
 %token INPP PARA SOMA SUBT MULT DIVI INVR CONJ DISJ NEGA 
-%token CMME CMMA CMIG CMDG CMEG CMAG NADA LEIT IMPR STHR
+%token CMME CMMA CMIG CMDG CMEG CMAG NADA LEIT IMPR 
 // instru��es com um par�metro
-%token CRCT AMEM DMEM ENPR ENRT DSVS DSVF ETHR
+%token CRCT AMEM DMEM ENPR ENRT DSVS DSVF
 // instru��es com dois par�metros
-%token CRVL ARMZ CRVI ARMI CREN CHPR RTPR DSVR CTHR
+%token CRVL ARMZ CRVI ARMI CREN CHPR RTPR DSVR 
+
+// Vector instructions
+%token CONT ARMM
+
+// Thread instructions
+%token CTHR STHR ETHR
 
 %%
  // REGRAS --------------------------------
@@ -100,7 +106,7 @@ comando :
 cmd_sem_param: 
   INPP | PARA | SOMA | SUBT | MULT | DIVI | INVR | CONJ | DISJ |
   NEGA | CMME | CMMA | CMIG | CMDG | CMEG | CMAG | NADA | LEIT |
-  IMPR | STHR
+  IMPR | STHR | CONT | ARMM
 ;
 
 cmd_um_param_int:

@@ -301,10 +301,21 @@ instrucao_mepa _executa_instr_MV_mepa(int *i, int *s, instStruct *I, int *D,
     *s = *s - 1;
     *i = *i + 1;
     break;
+    // Vector instructions
+    //----------------* CONT
+  case cont:
+    M[*s] = M[M[*s]];
+    break;
+    //----------------* ARMM
+  case armm:
+    M[M[*s - 1]] = M[*s];
+    *s = *s - 2;
+    break;
+    // Thread instructions
     //----------------* CTHR k, p
   case cthr: {
     THR_mepa *thread_mepa = cria_THR_mepa(M, D, I, mv_mepa_tam_i, *i, *s, k);
-    
+
     inicia_THR_mepa(thread_mepa);
     *i = *i + 1;
   } break;
@@ -328,7 +339,7 @@ instrucao_mepa executa_instr_MV_mepa() {
 }
 
 instrucao_mepa executa_instr_THR_mepa(THR_mepa *thread_mepa) {
-  return _executa_instr_MV_mepa(&thread_mepa->i, &thread_mepa->s,
-                                thread_mepa->vetorInstr, thread_mepa->vetorRegBase,
-                                thread_mepa->vetorPilha);
+  return _executa_instr_MV_mepa(
+      &thread_mepa->i, &thread_mepa->s, thread_mepa->vetorInstr,
+      thread_mepa->vetorRegBase, thread_mepa->vetorPilha);
 }

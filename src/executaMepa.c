@@ -11,17 +11,17 @@
  * separado , e por isso ficou aqui.
  * ------------------------------------------------------------------- */
 
-#include<stdio.h>
 #include "executaMepa.h"
+#include <stdio.h>
 
 /* -------------------------------------------------------------------
- * Laço de execucaoo de comandos MEPA. Ja entra executando o primeiro 
+ * Laço de execucaoo de comandos MEPA. Ja entra executando o primeiro
  * comando do arquivo, normalmente INPP.
  * ------------------------------------------------------------------- */
-void executaMepa(params_linha_comando* plc) {
+void executaMepa(params_linha_comando *plc) {
   cmd_usr cmd;
   instrucao_mepa instr_exec;
-  
+
   do {
     instr_exec = executa_instr_MV_mepa();
     if (plc->interativo)
@@ -39,5 +39,5 @@ void executaMepa(params_linha_comando* plc) {
       if (cmd == resume)
         plc->interativo = 0;
     }
-  }  while (cmd != sair);
+  } while (cmd != sair);
 }

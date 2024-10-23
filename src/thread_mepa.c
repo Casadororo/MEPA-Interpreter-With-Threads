@@ -12,7 +12,7 @@ int add_thread(THR_mepa *thread_mepa) {
       if (thread_mepas[i] == NULL) {
         thread_mepas[i] = thread_mepa;
         size_thread_mepas++;
-        
+
         return 1;
       }
     }
@@ -83,16 +83,21 @@ void *executaThreadMepa(void *arg) {
   } while (1);
 }
 
-THR_mepa *cria_THR_mepa(int *M, int *D, instStruct *I, int tam_i, int i,
-                        int s, int identificador) {
+THR_mepa *cria_THR_mepa(int *M, int *D, instStruct *I, int tam_i, int i, int s,
+                        int identificador) {
   THR_mepa *thread_mepa = (THR_mepa *)malloc(sizeof(THR_mepa));
 
   // copia vetor pilha
   thread_mepa->vetorPilha = (int *)malloc(sizeof(int) * 1024);
   memcpy(thread_mepa->vetorPilha, M, sizeof(int) * s);
+
+  thread_mepa->vetorPilha = M;
   // copia verot reg base
   thread_mepa->vetorRegBase = (int *)malloc(sizeof(int) * 1024);
   memcpy(thread_mepa->vetorRegBase, D, sizeof(int) * 1024);
+
+  thread_mepa->vetorRegBase = D;
+
   thread_mepa->vetorInstr = I;
   thread_mepa->tam_i = tam_i;
   thread_mepa->i = i;

@@ -32,9 +32,9 @@
  */
 
 novaLinha [\n]
-descarte [\t\r ]+        
-defRotulo [RL][0-9]+   
-defNumero [-+]?[0-9]+   
+descarte [\t\r ]+
+defRotulo [RL][0-9]+
+defNumero [-+]?[0-9]+
 
 %%
 {novaLinha}     {num_linha++;  imprimeCarregamento();}
@@ -81,9 +81,11 @@ PARA            { instr=para; return PARA; }
 RTPR            { instr=rtpr; return RTPR; }
 SOMA            { instr=soma; return SOMA; }
 SUBT            { instr=subt; return SUBT; }
-CTHR            { instr=cthr; return CTHR; }
+CONT            { instr=cont; return CONT; /* Vector instructions */ }
+ARMM            { instr=armm; return ARMM; }
+CTHR            { instr=cthr; return CTHR; /* Thread instructions */}
 STHR            { instr=sthr; return STHR; }
-ETHR            { instr=ethr; return ETHR; }             
+ETHR            { instr=ethr; return ETHR; }
 %%
 
 /* -------------------------------------------------------------------
