@@ -127,6 +127,7 @@ cmd_usr le_comando() {
 int _vetor_impr[TAM_VET_IMPR];
 int _inicio_vetor_impr = 0;
 int _fim_vetor_impr = -1;
+
 void insere_fim_vetor_impr(int elem) {
   _fim_vetor_impr++;
   if (_fim_vetor_impr >= TAM_VET_IMPR) {
@@ -195,6 +196,10 @@ void iniciaTabInstr() {
   strcpy(_tabInstr[chpr], "CHPR");
   strcpy(_tabInstr[rtpr], "RTPR");
   strcpy(_tabInstr[dsvr], "DSVR");
+  // Vector Stuff
+  strcpy(_tabInstr[cont], "CONT");
+  strcpy(_tabInstr[armm], "ARMM");
+  // Thread Stuff
   strcpy(_tabInstr[cthr], "CTHR");
   strcpy(_tabInstr[sthr], "STHR");
   strcpy(_tabInstr[ethr], "ETHR");
@@ -250,6 +255,8 @@ void gera_linha_impr_Instr_MV_mepa(char *sout, int i, char *primeiro) {
   case leit:
   case sthr:
   case impr:
+  case cont:
+  case armm:
     break;
     // ------------------------------------------------------------
     // caso 2: instrucao com um parametro: inteiro
@@ -288,7 +295,7 @@ void gera_linha_impr_Instr_MV_mepa(char *sout, int i, char *primeiro) {
             mv_mepa_I[i].op2, mv_mepa_I[i].op3);
     break;
   case cthr:
-    sprintf(sout + strlen(sout), "%d, %d", mv_mepa_I[i].op1, mv_mepa_I[i].op2);
+    sprintf(sout + strlen(sout), "%d, %d, %s", mv_mepa_I[i].op1, mv_mepa_I[i].op2, mv_mepa_I[i].rotDdesvio);
     break;
   case ethr:
     sprintf(sout + strlen(sout), "%d", mv_mepa_I[i].op1);

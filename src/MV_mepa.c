@@ -13,6 +13,7 @@
  * ------------------------------------------------------------------- */
 #include "MV_mepa.h"
 #include "interface_usuario.h"
+#include "memory.h"
 #include "thread_mepa.h"
 
 MV_mepa mv_mepa;
@@ -88,14 +89,14 @@ void relocaDesvios_MV_mepa() {
  * ------------------------------------------------------------------- */
 
 instrucao_mepa _executa_instr_MV_mepa(int *i, int *s, instStruct *I, int *D,
-                                      int *M) {
+                                      THR_mepa *thread_mepa) {
   instrucao_mepa instr_exec = I[*i].instr;
 
-  int k = mv_instr_op1;
-  int m = mv_instr_op1;
-  int n = mv_instr_op2;
-  int j = mv_instr_op2;
-  int p = mv_instr_opR;
+  int k = I[*i].op1;
+  int m = I[*i].op1;
+  int n = I[*i].op2;
+  int j = I[*i].op2;
+  int p = I[*i].endDesvio;
 
   switch (instr_exec) {
   //----------------* AMEM k
@@ -105,98 +106,98 @@ instrucao_mepa _executa_instr_MV_mepa(int *i, int *s, instStruct *I, int *D,
     break;
     //---------------- ARMI m,n
   case armi:
-    M[M[D[m] + n]] = M[*s];
+    M(M(D[m] + n)) = M(*s);
     *s = *s - 1;
     *i = *i + 1;
     break;
     //----------------* ARMZ m,n
   case armz:
-    M[D[m] + n] = M[*s];
+    M(D[m] + n) = M(*s);
     *s = *s - 1;
     *i = *i + 1;
     break;
     //---------------- CHPR p,n
   case chpr:
-    M[*s + 1] = *i + 1;
-    M[*s + 2] = n;
+    M(*s + 1) = *i + 1;
+    M(*s + 2) = n;
     *s = *s + 2;
     *i = p;
     break;
     //---------------- CMAG
   case cmag:
-    M[*s - 1] = (M[*s - 1] >= M[*s]) ? 1 : 0;
+    M(*s - 1) = (M(*s - 1) >= M(*s)) ? 1 : 0;
     *s = *s - 1;
     *i = *i + 1;
     break;
     //---------------- CMDG
   case cmdg:
-    M[*s - 1] = (M[*s - 1] != M[*s]) ? 1 : 0;
+    M(*s - 1) = (M(*s - 1) != M(*s)) ? 1 : 0;
     *s = *s - 1;
     *i = *i + 1;
     break;
     //---------------- CMEG
   case cmeg:
-    M[*s - 1] = (M[*s - 1] <= M[*s]) ? 1 : 0;
+    M(*s - 1) = (M(*s - 1) <= M(*s)) ? 1 : 0;
     *s = *s - 1;
     *i = *i + 1;
     break;
     //---------------- CMIG
   case cmig:
-    M[*s - 1] = (M[*s - 1] == M[*s]) ? 1 : 0;
+    M(*s - 1) = (M(*s - 1) == M(*s)) ? 1 : 0;
     *s = *s - 1;
     *i = *i + 1;
     break;
     //---------------- CMMA
   case cmma:
-    M[*s - 1] = (M[*s - 1] > M[*s]) ? 1 : 0;
+    M(*s - 1) = (M(*s - 1) > M(*s)) ? 1 : 0;
     *s = *s - 1;
     *i = *i + 1;
     break;
     //---------------- CMME
   case cmme:
-    M[*s - 1] = (M[*s - 1] < M[*s]) ? 1 : 0;
+    M(*s - 1) = (M(*s - 1) < M(*s)) ? 1 : 0;
     *s = *s - 1;
     *i = *i + 1;
     break;
     //----------------* CONJ
   case conj:
-    M[*s - 1] = (M[*s - 1] & M[*s]) ? 1 : 0;
+    M(*s - 1) = (M(*s - 1) & M(*s)) ? 1 : 0;
     *s = *s - 1;
     *i = *i + 1;
     break;
     //----------------* CRCT k
   case crct:
     *s = *s + 1;
-    M[*s] = k;
+    M(*s) = k;
     *i = *i + 1;
     break;
     //---------------- CREN m,n
   case cren:
     *s = *s + 1;
-    M[*s] = D[m] + n;
+    M(*s) = D[m] + n;
     *i = *i + 1;
     break;
     //---------------- CRVI m,n
   case crvi:
     *s = *s + 1;
-    M[*s] = M[M[D[m] + n]];
+    M(*s) = M(M(D[m] + n));
     *i = *i + 1;
     break;
     //----------------* CRVL m,n
   case crvl:
     *s = *s + 1;
-    M[*s] = M[D[m] + n];
+    M(*s) = M(D[m] + n);
     *i = *i + 1;
     break;
     //----------------* DISJ
   case disj:
-    M[*s - 1] = (M[*s - 1] | M[*s]) ? 1 : 0;
+    M(*s - 1) = (M(*s - 1) | M(*s)) ? 1 : 0;
     *s = *s - 1;
     *i = *i + 1;
     break;
     //----------------* DIVI
   case divi:
-    M[*s - 1] = (M[*s - 1] / M[*s]);
+    M(*s - 1) = (M(*s - 1) / M(*s));
     *s = *s - 1;
     *i = *i + 1;
     break;
@@ -207,7 +208,7 @@ instrucao_mepa _executa_instr_MV_mepa(int *i, int *s, instStruct *I, int *D,
     break;
     //---------------- DSVF p
   case dsvf:
-    *i = (M[*s] == 0) ? p : *i + 1;
+    *i = (M(*s) == 0) ? p : *i + 1;
     *s = *s - 1;
     break;
     //---------------- DSVR p,n,j
@@ -216,8 +217,8 @@ instrucao_mepa _executa_instr_MV_mepa(int *i, int *s, instStruct *I, int *D,
     int dest = j;
     int temp;
     while (atual != dest) {
-      temp = M[D[atual] - 2];
-      D[atual] = M[D[atual] - 1];
+      temp = M(D[atual] - 2);
+      D[atual] = M(D[atual] - 1);
       atual = temp;
     }
     *i = p;
@@ -230,7 +231,7 @@ instrucao_mepa _executa_instr_MV_mepa(int *i, int *s, instStruct *I, int *D,
     //---------------- ENPR m
   case enpr:
     *s = *s + 1;
-    M[*s] = D[m];
+    M(*s) = D[m];
     D[m] = *s + 1;
     *i = *i + 1;
     break;
@@ -241,7 +242,11 @@ instrucao_mepa _executa_instr_MV_mepa(int *i, int *s, instStruct *I, int *D,
     break;
     //---------------- IMPR
   case impr:
-    insere_fim_vetor_impr(M[*s]);
+    if (thread_mepa == NULL) {
+      insere_fim_vetor_impr(M(*s));
+    } else {
+      fprintf(thread_mepa->log, "(saida): %d\n", M(*s));
+    }
     *s = *s - 1;
     *i = *i + 1;
     break;
@@ -253,20 +258,20 @@ instrucao_mepa _executa_instr_MV_mepa(int *i, int *s, instStruct *I, int *D,
     break;
     //----------------* INVR
   case invr:
-    M[*s] = (-1) * M[*s];
+    M(*s) = (-1) * M(*s);
     *i = *i + 1;
     break;
     //---------------- LEIT
   case leit:
     *s = *s + 1;
     printf("(entrada):");
-    scanf("%d", &M[*s]);
+    scanf("%d", &M(*s));
     getchar(); // consome o \n
     *i = *i + 1;
     break;
     //----------------* MULT
   case mult:
-    M[*s - 1] = (M[*s - 1] * M[*s]);
+    M(*s - 1) = (M(*s - 1) * M(*s));
     *s = *s - 1;
     *i = *i + 1;
     break;
@@ -276,7 +281,7 @@ instrucao_mepa _executa_instr_MV_mepa(int *i, int *s, instStruct *I, int *D,
     break;
     //----------------* NEGA
   case nega:
-    M[*s] = 1 - M[*s];
+    M(*s) = 1 - M(*s);
     *i = *i + 1;
     break;
     //----------------* PARA
@@ -285,36 +290,38 @@ instrucao_mepa _executa_instr_MV_mepa(int *i, int *s, instStruct *I, int *D,
     break;
     //---------------- RTPR m,n
   case rtpr:
-    D[k] = M[*s];
-    *i = M[*s - 2];
+    D[k] = M(*s);
+    *i = M(*s - 2);
     *s = *s - (n + 3);
     break;
     //----------------* SOMA
   case soma:
-    M[*s - 1] = (M[*s - 1] + M[*s]);
+    M(*s - 1) = (M(*s - 1) + M(*s));
     *s = *s - 1;
     *i = *i + 1;
     break;
     //----------------* SUBT
   case subt:
-    M[*s - 1] = (M[*s - 1] - M[*s]);
+    M(*s - 1) = (M(*s - 1) - M(*s));
     *s = *s - 1;
     *i = *i + 1;
     break;
     // Vector instructions
     //----------------* CONT
   case cont:
-    M[*s] = M[M[*s]];
+    M(*s) = M(M(*s));
+    *i = *i + 1;
     break;
     //----------------* ARMM
   case armm:
-    M[M[*s - 1]] = M[*s];
+    M(M(*s - 1)) = M(*s);
     *s = *s - 2;
+    *i = *i + 1;
     break;
     // Thread instructions
     //----------------* CTHR k, p
   case cthr: {
-    THR_mepa *thread_mepa = cria_THR_mepa(M, D, I, mv_mepa_tam_i, *i, *s, k);
+    THR_mepa *thread_mepa = cria_THR_mepa(mv_mepa_M, D, p, *s, j, m);
 
     inicia_THR_mepa(thread_mepa);
     *i = *i + 1;
@@ -335,11 +342,10 @@ instrucao_mepa _executa_instr_MV_mepa(int *i, int *s, instStruct *I, int *D,
 
 instrucao_mepa executa_instr_MV_mepa() {
   return _executa_instr_MV_mepa(&mv_mepa_i, &mv_mepa_s, mv_mepa_I, mv_mepa_D,
-                                mv_mepa_M);
+                                NULL);
 }
 
 instrucao_mepa executa_instr_THR_mepa(THR_mepa *thread_mepa) {
-  return _executa_instr_MV_mepa(
-      &thread_mepa->i, &thread_mepa->s, thread_mepa->vetorInstr,
-      thread_mepa->vetorRegBase, thread_mepa->vetorPilha);
+  return _executa_instr_MV_mepa(&thread_mepa->i, &thread_mepa->s, mv_mepa_I,
+                                thread_mepa->vetorRegBase, thread_mepa);
 }

@@ -13,8 +13,8 @@
  * para acesso as cinco estruturas da máquina virtual.
  * ------------------------------------------------------------------- */
 
-#ifndef MEPA_H
-#define MEPA_H
+#ifndef MEPA_HPP
+#define MEPA_HPP
 
 #include <ctype.h>
 #include <stdio.h>

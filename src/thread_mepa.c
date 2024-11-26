@@ -1,5 +1,6 @@
 #include "thread_mepa.h"
 #include "MV_mepa.h"
+#include "executaMepa.h"
 #include <pthread.h>
 #include <unistd.h>
 
@@ -41,10 +42,19 @@ int find_thread(THR_mepa *thread_mepa) {
   return -1;
 }
 
+THR_mepa *freeThread(THR_mepa *thread_mepa) {
+  free(thread_mepa->thrVetorPilha);
+  free(thread_mepa->vetorRegBase);
+  fclose(thread_mepa->log);
+
+  return thread_mepa;
+}
+
 int remove_thread_by_index(int index) {
   if (index == -1)
     return 0;
 
+  free(freeThread(thread_mepas[index]));
   thread_mepas[index] = NULL;
   size_thread_mepas--;
 
@@ -61,48 +71,41 @@ void *executaThreadMepa(void *arg) {
   THR_mepa *thread_mepa = (THR_mepa *)arg;
 
   instrucao_mepa instr_exec;
+  cmd_usr cmd;
 
   do {
     instr_exec = executa_instr_THR_mepa(thread_mepa);
-    // if (plc->interativo)
-    //   imprime_estado_MV_mepa_interativo();
-    // else
-    //  imprime_estado_MV_mepa_batch();
-
+    
     if (instr_exec == para || instr_exec == sthr) {
-      printf("Thread %i execução finalizada\n", (int)thread_mepa->thread_id);
+      printf("Thread de id: %d com pid: %lu execução finalizada\n", thread_mepa->identificador, thread_mepa->thread_id);
       break;
     }
-
-    // if (plc->interativo) {
-    //   cmd = le_comando();
-    //   if (cmd == resume)
-    //     plc->interativo = 0;
-    // }
-    // } while (cmd != sair);
   } while (1);
 }
 
-THR_mepa *cria_THR_mepa(int *M, int *D, instStruct *I, int tam_i, int i, int s,
-                        int identificador) {
+THR_mepa *cria_THR_mepa(int *M, int *D, int i, int s,
+                        int lexic_level, int identificador) {
   THR_mepa *thread_mepa = (THR_mepa *)malloc(sizeof(THR_mepa));
 
-  // copia vetor pilha
-  thread_mepa->vetorPilha = (int *)malloc(sizeof(int) * 1024);
-  memcpy(thread_mepa->vetorPilha, M, sizeof(int) * s);
+  // Create M for thread and link main M
+  thread_mepa->mainVetorPilha = M;
+  thread_mepa->thrVetorPilha = (int *)malloc(sizeof(int) * 1024);
 
-  thread_mepa->vetorPilha = M;
-  // copia verot reg base
+  // Copy D
   thread_mepa->vetorRegBase = (int *)malloc(sizeof(int) * 1024);
   memcpy(thread_mepa->vetorRegBase, D, sizeof(int) * 1024);
 
-  thread_mepa->vetorRegBase = D;
-
-  thread_mepa->vetorInstr = I;
-  thread_mepa->tam_i = tam_i;
   thread_mepa->i = i;
+  thread_mepa->memoryDesloc = s;
   thread_mepa->s = s;
+  thread_mepa->vetorRegBase[lexic_level] = s + 1;
   thread_mepa->identificador = identificador;
+
+  // Create log file
+  char filename[50];
+  sprintf(filename, "%d-log.txt", identificador);
+  thread_mepa->log = fopen(filename, "w");
+  setbuf(thread_mepa->log, NULL);
 
   return thread_mepa;
 }

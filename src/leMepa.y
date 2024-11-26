@@ -97,9 +97,9 @@ comando :
   {
     insereInstr_MV_mepa(rotInstr, instr, 0, p2_int, p3_int, 0, p1_rot);
   }
-  | CTHR param1_int virgula param1_rot 
+  | CTHR param1_int virgula param2_int virgula param1_rot
   {
-    insereInstr_MV_mepa(rotInstr, instr, p1_int, 0, 0, 0, p1_rot);
+    insereInstr_MV_mepa(rotInstr, instr, p1_int, p2_int, 0, 0, p1_rot);
   }
 ;
 
@@ -155,10 +155,12 @@ int main (int argc, char** argv) {
   // ----------------
   inicia_MV_mepa ();
 
-
   // le programa indicado e o coloca na mv_mepa
   leComandosMepa(plc);
+  
   relocaDesvios_MV_mepa();
+  
+  setbuf(stdout, NULL);
   
   executaMepa(plc);
  }

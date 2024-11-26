@@ -6,19 +6,20 @@
 #define TAM_THR 24
 
 typedef struct THR_mepa {
-  int *vetorPilha;
+  int *mainVetorPilha;
+  int *thrVetorPilha;
   int *vetorRegBase;
-  instStruct *vetorInstr;
-  int tam_i;
   int i;
   int s;
 
+  int memoryDesloc;
   int identificador;
 
   pthread_t thread_id;
+  FILE *log;
 } THR_mepa;
 
-THR_mepa *cria_THR_mepa(int *M, int *D, instStruct *I, int tam_i, int i, int s,
+THR_mepa *cria_THR_mepa(int *M, int *D, int i, int s, int lexic_level,
                         int identificador);
 void inicia_THR_mepa(THR_mepa *thread_mepa);
 void espera_encerrar_THR_mepa(int identificador);
