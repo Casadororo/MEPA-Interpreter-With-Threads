@@ -90,6 +90,7 @@ THR_mepa *cria_THR_mepa(int *M, int *D, int i, int s,
   // Create M for thread and link main M
   thread_mepa->mainVetorPilha = M;
   thread_mepa->thrVetorPilha = (int *)malloc(sizeof(int) * 1024);
+  thread_mepa->thrVetorPilha[0] = identificador;
 
   // Copy D
   thread_mepa->vetorRegBase = (int *)malloc(sizeof(int) * 1024);
