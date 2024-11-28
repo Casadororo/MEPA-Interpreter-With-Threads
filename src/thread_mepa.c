@@ -24,6 +24,8 @@ int add_thread(THR_mepa *thread_mepa) {
 
 int find_thread_by_identifier(int identificador) {
   for (int i = 0; i < TAM_THR; i++) {
+    if (thread_mepas[i] == NULL)
+      continue;
     if (thread_mepas[i]->identificador == identificador) {
       return i;
     }
@@ -42,29 +44,26 @@ int find_thread(THR_mepa *thread_mepa) {
   return -1;
 }
 
-THR_mepa *freeThread(THR_mepa *thread_mepa) {
+void freeThread(THR_mepa *thread_mepa) {
   free(thread_mepa->thrVetorPilha);
   free(thread_mepa->vetorRegBase);
   fclose(thread_mepa->log);
-
-  return thread_mepa;
+  free(thread_mepa);
 }
 
 int remove_thread_by_index(int index) {
   if (index == -1)
     return 0;
 
-  free(freeThread(thread_mepas[index]));
   thread_mepas[index] = NULL;
   size_thread_mepas--;
 
   return 1;
 }
 
-int remove_thread(THR_mepa *thread_mepa) {
-  int index = find_thread(thread_mepa);
-
-  return remove_thread_by_index(index);
+void remove_thread(int index, THR_mepa *thread_mepa) {
+  remove_thread_by_index(index);
+  freeThread(thread_mepa);
 }
 
 void *executaThreadMepa(void *arg) {
@@ -125,6 +124,5 @@ void espera_encerrar_THR_mepa(int identificador) {
     return;
 
   pthread_join(thread_mepas[index]->thread_id, NULL);
-
-  remove_thread(thread_mepas[index]);
+  remove_thread(index, thread_mepas[index]);
 }
